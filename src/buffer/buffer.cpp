@@ -4,6 +4,7 @@
 
 
 #include "buffer.h"
+#include <string.h>
 buffer::buffer(int buffer_size):
         buffer_(buffer_size),
         read_pos(0),
@@ -18,8 +19,37 @@ size_t buffer::bytes_read() const {
     return read_pos;
 }
 
+char *buffer::read_begin() {
+    return begin() + read_pos;
+}
+
+std::string buffer::retrieve_to_str() {
+    std::string str(read_begin(), bytes_unread());
+    retrieve_all();
+    return str;
+}
+
+void buffer::retrieve_all() {
+    bzero(&buffer_[0], buffer_.size());
+    write_pos = 0;
+    read_pos = 0;
+}
+void buffer::has_written(size_t len) {
+    write_pos += len;
+}
 size_t buffer::space_remain() const {
     return buffer_size_ - write_pos;
+}
+
+size_t buffer::bytes_unread() const {
+    return write_pos - read_pos;
+}
+char* buffer::begin() {
+    return &*buffer_.begin();  // 等价于&buffer[0]
+}
+
+char * buffer::write_begin() {
+    return begin() + write_pos;
 }
 
 RC buffer::resize(size_t len) {
@@ -40,6 +70,7 @@ RC buffer::write(const char *data, size_t len) {
     }
     std::copy(data, data + len, buffer_.begin() + write_pos);
     write_pos += len;
+    return RC::SUCCESS;
 }
 
 

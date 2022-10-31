@@ -1,14 +1,10 @@
-//
-// Created by archhh on 10/30/22.
-//
-
-#ifndef HALFSTARSERVER_BUFFER_H
-#define HALFSTARSERVER_BUFFER_H
+#ifndef BUFFER_H
+#define BUFFER_H
 #include "../rc.h"
 #include <unistd.h>
 #include <vector>
 #include <assert.h>
-
+#include <string>
 
 class buffer {
 public:
@@ -23,7 +19,12 @@ public:
 
     RC readfd(int fd, int *Errno);
     RC writefd(int fd, int *Errno);
-
+    char * begin();
+    char * write_begin();
+    char * read_begin();
+    void retrieve_all();
+    std::string retrieve_to_str();
+    void has_written(size_t len);
 private:
     std::vector<char>buffer_;
     size_t buffer_size_;
@@ -31,3 +32,4 @@ private:
     size_t write_pos;
 };
 
+#endif //BUFFER_H
