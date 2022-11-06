@@ -23,6 +23,10 @@ char *buffer::read_begin() {
     return begin() + read_pos;
 }
 
+void buffer::retrive_until(const char* end) {
+    assert(read_begin() <= end);
+    read_pos += (end - read_begin());
+}
 std::string buffer::retrieve_to_str() {
     std::string str(read_begin(), bytes_unread());
     retrieve_all();
@@ -70,6 +74,16 @@ RC buffer::write(const char *data, size_t len) {
     }
     std::copy(data, data + len, buffer_.begin() + write_pos);
     write_pos += len;
+    return RC::SUCCESS;
+}
+
+RC buffer::write(const char *data) {
+    write(data, strlen(data));
+    return RC::SUCCESS;
+}
+
+RC buffer::write(const std::string data) {
+    write(data.data(), data.length());
     return RC::SUCCESS;
 }
 
